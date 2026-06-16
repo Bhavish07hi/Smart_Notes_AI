@@ -1,0 +1,85 @@
+version: "3.9"
+
+services:
+  # -------------------------------------------------------------------------
+  # PostgreSQL Database
+  # -------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: smartnotes_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: smartnotes
+      POSTGRES_PASSWORD: smartnotes
+      POSTGRES_DB: smartnotes_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartnotes -d smartnotes_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------------------------------------
+  # FastAPI Backend
+  # -------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smartnotes_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://smartnotes:smartnotes@db:5432/smartnotes_db
+      SECRET_KEY: ${SECRET_KEY:-change_me_in_production}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o}
+      CORS_ORIGINS: '["http://localhost:5173","http://localhost:3000","http://localhost:80","http://frontend"]'
+      UPLOAD_DIR: /app/storage/uploads
+      FAISS_INDEX_DIR: /app/storage/faiss_index
+    volumes:
+      - backend_uploads:/app/storage/uploads
+      - backend_faiss:/app/storage/faiss_index
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # -------------------------------------------------------------------------
+  # React Frontend (nginx)
+  # -------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smartnotes_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+  backend_uploads:
+    driver: local
+  backend_faiss:
+    driver: local
