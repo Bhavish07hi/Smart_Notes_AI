@@ -26,8 +26,14 @@ class Summary(Base):
 
     title = Column(String(512), nullable=False)
     chapter = Column(String(255), nullable=True)
-    length_type = Column(Enum(SummaryLength), nullable=False, default=SummaryLength.MEDIUM)
-
+    length_type = Column(
+    Enum(
+        SummaryLength,
+        values_callable=lambda x: [e.value for e in x]
+    ),
+    nullable=False,
+    default=SummaryLength.MEDIUM
+    )
     content = Column(Text, nullable=False)
     key_concepts = Column(Text, nullable=True)
     important_formulas = Column(Text, nullable=True)

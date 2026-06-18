@@ -25,7 +25,14 @@ class User(Base):
     name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.STUDENT, nullable=False)
+    role = Column(
+    Enum(
+        UserRole,
+        values_callable=lambda x: [e.value for e in x]
+    ),
+    default=UserRole.STUDENT,
+    nullable=False
+)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

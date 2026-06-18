@@ -24,9 +24,16 @@ class ChatMessage(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     document_id = Column(UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False, index=True)
 
-    role = Column(Enum(MessageRole), nullable=False)
+    role = Column(
+        Enum(
+            MessageRole,
+            values_callable=lambda x: [e.value for e in x]
+        ),
+        nullable=False
+    )
+
     content = Column(Text, nullable=False)
-    sources = Column(JSONB, nullable=True)  # list of {chunk_id, content_snippet, page_number}
+    sources = Column(JSONB, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 

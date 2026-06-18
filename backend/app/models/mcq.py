@@ -29,7 +29,14 @@ class MCQ(Base):
     correct_option = Column(String(1), nullable=False)  # "A" | "B" | "C" | "D"
     explanation = Column(Text, nullable=False)
     topic = Column(String(255), nullable=True, index=True)
-    difficulty = Column(Enum(MCQDifficulty), default=MCQDifficulty.MEDIUM, nullable=False)
+    difficulty = Column(
+    Enum(
+        MCQDifficulty,
+        values_callable=lambda x: [e.value for e in x]
+    ),
+    default=MCQDifficulty.MEDIUM,
+    nullable=False
+    )
     order_index = Column(Integer, default=0)
 
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)

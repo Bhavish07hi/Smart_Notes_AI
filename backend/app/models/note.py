@@ -29,7 +29,11 @@ class Note(Base):
     title = Column(String(512), nullable=False)
     topic = Column(String(255), nullable=True, index=True)
     chapter = Column(String(255), nullable=True)
-    note_type = Column(Enum(NoteType), nullable=False, default=NoteType.DETAILED)
+    note_type = Column(
+    String(50),
+    nullable=False,
+    default="detailed"
+    )
     content = Column(Text, nullable=False)
     order_index = Column(Integer, default=0)
 

@@ -27,8 +27,14 @@ class Flashcard(Base):
     question = Column(Text, nullable=False)
     answer = Column(Text, nullable=False)
     topic = Column(String(255), nullable=True, index=True)
-    difficulty = Column(Enum(DifficultyLevel), default=DifficultyLevel.MEDIUM, nullable=False)
-
+    difficulty = Column(
+    Enum(
+        DifficultyLevel,
+        values_callable=lambda x: [e.value for e in x]
+    ),
+    default=DifficultyLevel.MEDIUM,
+    nullable=False
+    )
     review_count = Column(Integer, default=0)
     is_mastered = Column(Boolean, default=False)
 

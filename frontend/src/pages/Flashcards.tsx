@@ -99,33 +99,62 @@ export default function Flashcards() {
         </Card>
       ) : (
         <div className="space-y-4">
+          <div className="mb-6 h-2 w-full overflow-hidden rounded-full bg-white/5">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-500"
+              style={{
+                width: `${((currentIndex + 1) / flashcards.length) * 100}%`,
+              }}
+            />
+          </div>
+
           <p className="text-sm text-muted-foreground">
             Card {currentIndex + 1} of {flashcards.length}
           </p>
 
-          <div className="flex justify-center [perspective:1200px]">
+          <div className="flex flex-col items-center justify-center [perspective:1200px]">
+            {/* Outer Premium Container Sizing */}
             <div
               onClick={() => setIsFlipped((f) => !f)}
               className={cn(
-                "relative h-64 w-full max-w-xl cursor-pointer transition-transform duration-500 [transform-style:preserve-3d]",
+                "relative h-80 w-full max-w-2xl cursor-pointer transition-all duration-700 hover:scale-[1.01] [transform-style:preserve-3d]",
                 isFlipped && "[transform:rotateY(180deg)]"
               )}
             >
-              {/* Front */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl border border-border bg-card p-6 text-center shadow-sm [backface-visibility:hidden]">
-                <Badge variant={difficultyVariant[current.difficulty]} className="absolute right-4 top-4 capitalize">
+              {/* Front Side Premium Design */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-black p-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl [backface-visibility:hidden]">
+                <Badge variant={difficultyVariant[current.difficulty]} className="absolute right-6 top-6 capitalize">
                   {current.difficulty}
                 </Badge>
-                {current.topic && <Badge variant="secondary" className="absolute left-4 top-4">{current.topic}</Badge>}
-                <p className="text-lg font-medium">{current.question}</p>
-                <p className="mt-4 text-xs text-muted-foreground">Click to reveal answer</p>
+                {current.topic && <Badge variant="secondary" className="absolute left-6 top-6">{current.topic}</Badge>}
+                
+                <div className="mb-6 rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-wider text-blue-300">
+                  Flashcard
+                </div>
+
+                <p className="text-2xl font-semibold leading-relaxed text-white">
+                  {current.question}
+                </p>
+                <p className="absolute bottom-6 text-xs text-muted-foreground">Click to reveal answer</p>
               </div>
-              {/* Back */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl border border-primary bg-primary/5 p-6 text-center shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                <p className="text-lg">{current.answer}</p>
-                <p className="mt-4 text-xs text-muted-foreground">Click to flip back</p>
+
+              {/* Back Side Premium Design */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center rounded-[28px] border border-blue-500/20 bg-gradient-to-br from-slate-900 via-blue-950 to-black p-8 text-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                <div className="mb-6 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-300">
+                  Answer
+                </div>
+
+                <p className="text-xl leading-8 text-slate-200">
+                  {current.answer}
+                </p>
+                <p className="absolute bottom-6 text-xs text-muted-foreground">Click to flip back</p>
               </div>
             </div>
+
+            {/* Subtle Hint Instruction */}
+            <p className="mt-4 text-sm text-muted-foreground">
+              Click card to flip
+            </p>
           </div>
 
           <div className="flex items-center justify-center gap-3">

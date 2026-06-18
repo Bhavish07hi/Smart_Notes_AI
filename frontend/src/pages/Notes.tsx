@@ -5,7 +5,15 @@ import { generateNotes, listNotes } from "@/api/endpoints";
 import { useDocument } from "@/context/DocumentContext";
 import DocumentRequired from "@/components/DocumentRequired";
 import Markdown from "@/components/Markdown";
-import { Button, Card, CardContent, CardHeader, CardTitle, Badge, Loader } from "@/components/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Badge,
+  Loader,
+} from "@/components/ui";
 import type { NoteType } from "@/types";
 
 const NOTE_TYPES: { value: NoteType; label: string }[] = [
@@ -19,7 +27,12 @@ const NOTE_TYPES: { value: NoteType; label: string }[] = [
 export default function Notes() {
   const { selectedDocumentId } = useDocument();
   const queryClient = useQueryClient();
-  const [selectedTypes, setSelectedTypes] = useState<NoteType[]>(["detailed", "concise"]);
+
+  const [selectedTypes, setSelectedTypes] = useState<NoteType[]>([
+    "detailed",
+    "concise",
+  ]);
+
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
@@ -31,19 +44,33 @@ export default function Notes() {
   const generateMutation = useMutation({
     mutationFn: () => generateNotes(selectedDocumentId!, selectedTypes),
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ["notes", selectedDocumentId] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
-      if (result.items.length > 0) setActiveNoteId(result.items[0].id);
+      queryClient.invalidateQueries({
+        queryKey: ["notes", selectedDocumentId],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["dashboard"],
+      });
+
+      if (result.items.length > 0) {
+        setActiveNoteId(result.items[0].id);
+      }
     },
   });
 
   if (!selectedDocumentId) return <DocumentRequired />;
 
   const notes = data?.items ?? [];
-  const activeNote = notes.find((n) => n.id === activeNoteId) ?? notes[0];
+
+  const activeNote =
+    notes.find((n) => n.id === activeNoteId) ?? notes[0];
 
   function toggleType(type: NoteType) {
-    setSelectedTypes((prev) => (prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]));
+    setSelectedTypes((prev) =>
+      prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : [...prev, type]
+    );
   }
 
   return (
@@ -51,7 +78,11 @@ export default function Notes() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Smart Notes</h1>
-          <p className="text-sm text-muted-foreground">AI-generated structured notes for your document.</p>
+
+          <p className="mt-2 text-sm text-slate-400">
+            {notes.length} generated note
+            {notes.length !== 1 ? "s" : ""}
+          </p>
         </div>
       </div>
 
@@ -59,6 +90,7 @@ export default function Notes() {
         <CardHeader>
           <CardTitle>Generate Notes</CardTitle>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {NOTE_TYPES.map(({ value, label }) => (
@@ -75,43 +107,62 @@ export default function Notes() {
               </button>
             ))}
           </div>
+
           <Button
             onClick={() => generateMutation.mutate()}
-            disabled={selectedTypes.length === 0 || generateMutation.isPending}
+            disabled={
+              selectedTypes.length === 0 ||
+              generateMutation.isPending
+            }
           >
             <Sparkles className="h-4 w-4" />
-            {generateMutation.isPending ? "Generating..." : "Generate Notes"}
+            {generateMutation.isPending
+              ? "Generating..."
+              : "Generate Notes"}
           </Button>
+
           {generateMutation.isError && (
             <p className="text-sm text-destructive">
-              {(generateMutation.error as any)?.response?.data?.detail ?? "Failed to generate notes."}
+              {(generateMutation.error as any)?.response?.data?.detail ??
+                "Failed to generate notes."}
             </p>
           )}
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 border-white/10 bg-white/5 backdrop-blur-xl">
           <CardHeader>
             <CardTitle>Generated Notes</CardTitle>
           </CardHeader>
+
           <CardContent>
             {isLoading ? (
               <Loader />
             ) : notes.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No notes generated yet.</p>
+              <p className="text-sm text-muted-foreground">
+                No notes generated yet.
+              </p>
             ) : (
               <div className="space-y-2">
                 {notes.map((note) => (
                   <button
                     key={note.id}
                     onClick={() => setActiveNoteId(note.id)}
-                    className={`w-full rounded-md border p-3 text-left text-sm transition-colors ${
-                      activeNote?.id === note.id ? "border-primary bg-primary/5" : "border-border hover:bg-secondary"
+                    className={`w-full rounded-xl border p-4 text-left transition-all duration-200 ${
+                      activeNote?.id === note.id
+                        ? "border-blue-500 bg-blue-500/10 shadow-lg"
+                        : "border-white/10 hover:bg-white/5"
                     }`}
                   >
-                    <p className="font-medium truncate">{note.title}</p>
-                    <Badge variant="secondary" className="mt-1 capitalize">
+                    <p className="truncate font-medium">
+                      {note.title}
+                    </p>
+
+                    <Badge
+                      variant="secondary"
+                      className="mt-1 capitalize"
+                    >
                       {note.note_type.replace("_", " ")}
                     </Badge>
                   </button>
@@ -121,17 +172,37 @@ export default function Notes() {
           </CardContent>
         </Card>
 
-        <Card className="lg:col-span-3">
-          <CardHeader>
-            <CardTitle>{activeNote ? activeNote.title : "Select a note"}</CardTitle>
-            {activeNote?.topic && <p className="text-sm text-muted-foreground">Topic: {activeNote.topic}</p>}
+        <Card className="lg:col-span-3 border-white/10 bg-white/5 backdrop-blur-xl">
+          <CardHeader className="sticky top-0 z-10 border-b border-white/10 bg-black/40 backdrop-blur-xl">
+            <CardTitle className="text-3xl font-bold">
+              {activeNote
+                ? activeNote.title
+                : "Select a note"}
+            </CardTitle>
+
+            {activeNote?.topic && (
+              <p className="text-sm text-muted-foreground">
+                Topic: {activeNote.topic}
+              </p>
+            )}
+
+            {activeNote && (
+              <Badge
+                variant="secondary"
+                className="mt-2 w-fit capitalize"
+              >
+                {activeNote.note_type.replace("_", " ")}
+              </Badge>
+            )}
           </CardHeader>
-          <CardContent>
+
+          <CardContent className="mx-auto max-w-4xl">
             {activeNote ? (
               <Markdown content={activeNote.content} />
             ) : (
-              <p className="text-sm text-muted-foreground">
-                Generate notes above, then select one to view its content.
+              <p className="py-20 text-center text-base text-muted-foreground">
+                Generate notes above, then select one to view its
+                content.
               </p>
             )}
           </CardContent>

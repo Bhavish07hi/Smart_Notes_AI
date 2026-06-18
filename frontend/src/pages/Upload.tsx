@@ -71,29 +71,35 @@ export default function Upload() {
         </p>
       </div>
 
-      <Card>
+      {/* Change 1: Premium Upload Card with glassmorphism styling */}
+      <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
         <CardContent className="p-6">
+          {/* Change 2 & 3: Massive Upload Zone and Sexy Drop States */}
           <div
             {...getRootProps()}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-border p-10 text-center transition-colors",
-              isDragActive && "border-primary bg-primary/5"
+              "flex min-h-[320px] cursor-pointer flex-col items-center justify-center gap-5 rounded-3xl border-2 border-dashed border-white/15 bg-white/[0.03] p-12 text-center transition-all duration-300",
+              isDragActive && "scale-[1.01] border-blue-500 bg-blue-500/10 shadow-[0_0_60px_rgba(59,130,246,0.25)]"
             )}
           >
             <input {...getInputProps()} />
-            <UploadCloud className="h-10 w-10 text-primary" />
+            {/* Change 4: Scaled-up upload icon layout frame */}
+            <UploadCloud className="h-20 w-20 text-blue-400" />
             <div>
-              <p className="font-medium">Drag and drop files here, or click to browse</p>
-              <p className="text-sm text-muted-foreground">Supports PDF, PPT, PPTX, DOCX, TXT (max 50MB each)</p>
+              {/* Change 5: Premium Headings and Subtext Layout Adjustments */}
+              <p className="text-2xl font-semibold text-white">Upload Learning Materials</p>
+              <p className="max-w-lg text-sm text-slate-400 mt-1">Supports PDF, PPT, PPTX, DOCX, TXT (max 50MB each)</p>
             </div>
-            <Button type="button">Browse Files</Button>
+            {/* Change 6: Premium Browse Button */}
+            <Button type="button" className="rounded-xl px-6 shadow-lg">Browse Files</Button>
           </div>
 
+          {/* Change 7: Beautiful Multicolored Linear Gradient Progress Bar */}
           {uploadMutation.isPending && (
             <div className="mt-4">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-white/5">
                 <div
-                  className="h-full bg-primary transition-all"
+                  className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 transition-all duration-500"
                   style={{ width: `${progress ?? 0}%` }}
                 />
               </div>
@@ -109,7 +115,8 @@ export default function Upload() {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Change 8: Premium Documents Workspace Table Glass Frame */}
+      <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
         <CardHeader>
           <CardTitle>Your Documents</CardTitle>
         </CardHeader>
@@ -117,12 +124,15 @@ export default function Upload() {
           {isLoading ? (
             <Loader />
           ) : !documents?.items.length ? (
-            <p className="text-sm text-muted-foreground">No documents uploaded yet.</p>
+            /* Change 9: High Visibility Premium Centered Empty State View */
+            <p className="py-16 text-center text-base text-slate-400">
+              Upload your first document to start generating notes, flashcards, summaries and MCQs.
+            </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-left text-muted-foreground">
+                  <tr className="border-b border-white/10 text-left text-muted-foreground">
                     <th className="py-2 font-medium">File</th>
                     <th className="py-2 font-medium">Type</th>
                     <th className="py-2 font-medium">Size</th>
@@ -134,7 +144,11 @@ export default function Upload() {
                 </thead>
                 <tbody>
                   {documents.items.map((doc) => (
-                    <tr key={doc.id} className="border-b border-border last:border-0">
+                    /* Change 10: Smooth Transition Row Highlighting Layout */
+                    <tr
+                      key={doc.id}
+                      className="border-b border-white/5 transition-colors hover:bg-white/[0.03]"
+                    >
                       <td className="py-3">
                         <div className="flex items-center gap-2">
                           <FileText className="h-4 w-4 text-muted-foreground" />

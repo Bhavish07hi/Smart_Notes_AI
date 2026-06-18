@@ -17,7 +17,7 @@ from app.services import prompts
 from app.services.llm_client import generate_json
 
 # Max characters of source content to send per generation call.
-MAX_CONTENT_CHARS = 12000
+MAX_CONTENT_CHARS = 2000
 
 
 def _truncate(content: str, max_chars: int = MAX_CONTENT_CHARS) -> str:

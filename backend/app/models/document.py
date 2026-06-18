@@ -36,10 +36,27 @@ class Document(Base):
     filename = Column(String(512), nullable=False)
     original_filename = Column(String(512), nullable=False)
     file_path = Column(String(1024), nullable=False)
-    file_type = Column(Enum(DocumentType), nullable=False)
+
+    file_type = Column(
+        Enum(
+            DocumentType,
+            values_callable=lambda x: [e.value for e in x]
+        ),
+        nullable=False
+    )
+
     file_size_bytes = Column(Integer, nullable=False)
 
-    status = Column(Enum(DocumentStatus), default=DocumentStatus.UPLOADED, nullable=False, index=True)
+    status = Column(
+        Enum(
+            DocumentStatus,
+            values_callable=lambda x: [e.value for e in x]
+        ),
+        default=DocumentStatus.UPLOADED,
+        nullable=False,
+        index=True
+    )
+
     error_message = Column(Text, nullable=True)
 
     extracted_text_path = Column(String(1024), nullable=True)

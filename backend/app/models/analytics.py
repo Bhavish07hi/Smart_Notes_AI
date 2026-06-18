@@ -28,7 +28,16 @@ class AnalyticsEvent(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    event_type = Column(Enum(EventType), nullable=False, index=True)
+    
+    event_type = Column(
+        Enum(
+            EventType,
+            values_callable=lambda x: [e.value for e in x]
+        ),
+        nullable=False,
+        index=True
+    )
+    
     meta = Column(String(512), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
 

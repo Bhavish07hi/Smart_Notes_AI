@@ -16,7 +16,7 @@ export default function DocumentSelector({ value, onChange }: DocumentSelectorPr
     queryFn: () => listDocuments(0, 100),
   });
 
-  const processedDocs = (data?.items ?? []).filter((d) => d.status === "processed");
+  const processedDocs = data?.items ?? [];
 
   return (
     <select

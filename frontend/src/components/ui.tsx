@@ -49,7 +49,10 @@ Button.displayName = "Button";
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-lg border border-border bg-card text-card-foreground shadow-sm", className)}
+      className={cn(
+      "rounded-2xl border border-white/10 bg-white/5 text-card-foreground shadow-xl backdrop-blur-xl transition-all duration-300          hover:border-blue-500/20 hover:shadow-blue-500/10",
+  className
+)}
       {...props}
     />
   );

@@ -21,7 +21,7 @@ def create_note(db: Session, document_id: uuid.UUID, data: dict, note_type: Note
         title=data.get("title", "Untitled Notes"),
         topic=data.get("topic"),
         chapter=data.get("chapter"),
-        note_type=note_type,
+        note_type=note_type.value,  
         content=data.get("content", ""),
         order_index=order_index,
     )
@@ -45,7 +45,7 @@ def create_summary(db: Session, document_id: uuid.UUID, data: dict, length_type:
         document_id=document_id,
         title=data.get("title", "Untitled Summary"),
         chapter=data.get("chapter"),
-        length_type=length_type,
+        length_type=length_type.value,
         content=data.get("content", ""),
         key_concepts=data.get("key_concepts"),
         important_formulas=data.get("important_formulas"),
@@ -80,7 +80,7 @@ def bulk_create_flashcards(db: Session, document_id: uuid.UUID, items: list[dict
                 question=item.get("question", ""),
                 answer=item.get("answer", ""),
                 topic=item.get("topic"),
-                difficulty=difficulty,
+                difficulty=difficulty.value,
             )
         )
     db.add_all(flashcards)
@@ -129,7 +129,7 @@ def bulk_create_mcqs(db: Session, document_id: uuid.UUID, items: list[dict]) -> 
                 correct_option=item.get("correct_option", "A"),
                 explanation=item.get("explanation", ""),
                 topic=item.get("topic"),
-                difficulty=difficulty,
+                difficulty=difficulty.value,
                 order_index=idx,
             )
         )

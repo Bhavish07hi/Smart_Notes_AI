@@ -46,11 +46,31 @@ export default function MCQs() {
   const answeredCount = Object.keys(answers).length;
   const correctCount = mcqs.filter((m) => answers[m.id] === m.correct_option).length;
 
+  /* Change 1: Premium Exam Platform Calculations */
+  const progress = mcqs.length > 0 ? (answeredCount / mcqs.length) * 100 : 0;
+  const accuracy = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">MCQ Practice</h1>
         <p className="text-sm text-muted-foreground">Test your knowledge with AI-generated multiple choice questions.</p>
+        
+        {/* Change 3: Premium Overall Progress Status Bar under layout header */}
+        {mcqs.length > 0 && (
+          <div className="mt-4">
+            <div className="mb-2 flex justify-between text-xs text-muted-foreground">
+              <span>Progress</span>
+              <span>{answeredCount}/{mcqs.length}</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-white/5">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       <Card>
@@ -75,10 +95,17 @@ export default function MCQs() {
             <Sparkles className="h-4 w-4" />
             {generateMutation.isPending ? "Generating..." : "Generate MCQs"}
           </Button>
+          
+          {/* Change 2: Premium Accuracy and Score Badge Indicators */}
           {mcqs.length > 0 && (
-            <Badge variant="secondary">
-              Score: {correctCount}/{answeredCount} answered ({mcqs.length} total)
-            </Badge>
+            <div className="flex items-center gap-3">
+              <Badge variant="secondary">
+                Score {correctCount}/{answeredCount}
+              </Badge>
+              <Badge variant="default">
+                {accuracy}% Accuracy
+              </Badge>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -97,7 +124,11 @@ export default function MCQs() {
             const selected = answers[mcq.id];
             const isAnswered = !!selected;
             return (
-              <Card key={mcq.id}>
+              /* Change 4: Premium Dark/Glass Container Layout styling */
+              <Card
+                key={mcq.id}
+                className="border-white/10 bg-white/5 backdrop-blur-xl"
+              >
                 <CardContent className="space-y-3 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <p className="font-medium">
@@ -116,25 +147,33 @@ export default function MCQs() {
                           key={key}
                           onClick={() => selectAnswer(mcq.id, key)}
                           disabled={isAnswered}
+                          /* Change 5: Expanded interactive option boxes styles */
                           className={cn(
-                            "flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors",
+                            "flex w-full items-center justify-between rounded-xl border px-4 py-4 text-base transition-all duration-200",
                             !isAnswered && "hover:bg-secondary",
                             isAnswered && isCorrect && "border-green-500 bg-green-500/10",
                             isAnswered && isSelected && !isCorrect && "border-destructive bg-destructive/10",
                             !isAnswered && "border-border"
                           )}
                         >
-                          <span>
-                            <span className="font-semibold">{key}.</span> {value}
-                          </span>
+                          {/* Change 6: High-visibility Option Letter Badges */}
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/15 font-bold">
+                              {key}
+                            </div>
+                            <span>{value}</span>
+                          </div>
+                          
                           {isAnswered && isCorrect && <CheckCircle2 className="h-4 w-4 text-green-600" />}
                           {isAnswered && isSelected && !isCorrect && <XCircle className="h-4 w-4 text-destructive" />}
                         </button>
                       );
                     })}
                   </div>
+                  
+                  {/* Change 7: Premium Styled Explanation Info Box */}
                   {isAnswered && (
-                    <div className="rounded-md bg-secondary p-3 text-sm">
+                    <div className="rounded-xl border border-blue-500/10 bg-blue-500/5 p-4 text-sm">
                       <p className="font-medium">Explanation</p>
                       <p className="text-muted-foreground">{mcq.explanation}</p>
                     </div>
